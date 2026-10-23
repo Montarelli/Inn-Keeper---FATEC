@@ -1,0 +1,7 @@
+CREATE TABLE Cadclientes(
+    idcliente INTEGER PRIMARY KEY,
+    cpf TEXT NOT NULL UNIQUE,
+    nome VARCHAR(50) NOT NULL,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    senha TEXT NOT NULL,
+	email varchar(50));
