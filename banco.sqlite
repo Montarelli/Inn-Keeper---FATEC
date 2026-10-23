@@ -4,4 +4,4 @@ CREATE TABLE Cadclientes(
     nome VARCHAR(50) NOT NULL,
     login VARCHAR(50) NOT NULL UNIQUE,
     senha TEXT NOT NULL,
-	email varchar(30));
+	email varchar(50));
