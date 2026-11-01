@@ -1,0 +1,86 @@
+# Cadastro de usuarios v03 testando validador de cpf
+import sqlite3
+from hashlib import sha256
+import re
+
+
+# Validador de CPF
+def valida_cpf(cpf):
+    # Remove caracteres não numéricos
+    cpf = re.sub(r'\D', '', cpf)
+
+    # Verifica se tem 11 dígitos ou se todos são iguais
+    if len(cpf) != 11 or cpf == cpf[0] * 11:
+        return False
+
+    # Validação do 1º dígito verificador
+    soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
+    resto = (soma * 10) % 11
+    digito1 = 0 if resto == 10 else resto
+
+    if digito1 != int(cpf[9]):
+        return False
+
+    # Validação do 2º dígito verificador
+    soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
+    resto = (soma * 10) % 11
+    digito2 = 0 if resto == 10 else resto
+
+    return digito2 == int(cpf[10])
+
+
+# Conexão com banco de dados
+conn = sqlite3.connect("Cadastroclientes.db")
+
+while True:
+    print("---CADASTRO DE NOVO USUÁRIO---")
+
+    # CPF
+    vcpf = input("Informe o CPF: ")
+
+    while not valida_cpf(vcpf):
+        print("CPF inválido!")
+        vcpf = input("Informe o CPF novamente: ")
+
+    # Nome
+    vnome = input("Informe o Nome: ")
+
+    while vnome == "":
+        print("O nome não pode estar vazio!")
+        vnome = input("Informe o Nome novamente: ")
+
+    # Usuário
+    vlogin = input("Informe o Usuário: ")
+
+    while vlogin == "":
+        print("O usuário não pode estar vazio!")
+        vlogin = input("Informe o Usuário novamente: ")
+
+    # Senha
+    vsenha = input("Informe a Senha: ")
+
+    while len(vsenha) < 5:
+        print("A senha deve ter no mínimo 5 caracteres!")
+        vsenha = input("Informe a Senha novamente: ")
+
+    # Criptografar senha
+    senha_hash = sha256(vsenha.encode('utf-8')).hexdigest()
+
+    # Enviar instrução para execução
+    conn.execute(
+        "INSERT INTO Cadclientes (cpf, nome, login, senha) values (?,?,?,?)",
+        (vcpf, vnome, vlogin, senha_hash)
+    )
+
+    conn.commit()
+
+    continua = input("Digite N para encerrar ")
+
+    if continua.upper() == "N":
+        break
+
+
+# Encerrar conexão
+conn.close()
+
+quit()
