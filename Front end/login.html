@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inn-Keeper - Login</title>
+
+    <!-- Bootstrap 5 CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Bootstrap Icons via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Estilos Customizados (Padrão Booking/Decolar) -->
+    <style>
+      :root {
+        --bs-primary: #ff9f43; /* Laranja da marca */
+        --bs-primary-hover: #ff8c1a;
+      }
+
+      html, body {
+        height: 100%;
+        background-color: #f8f9fa; /* Fundo cinza claro */
+      }
+      
+      body {
+        display: flex;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+
+      /* Card de Login Centralizado */
+      .form-signin {
+        max-width: 400px;
+        padding: 2.5rem 2rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      }
+
+      .btn-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+      }
+      
+      .btn-primary:hover {
+        background-color: var(--bs-primary-hover);
+        border-color: var(--bs-primary-hover);
+        color: #fff;
+      }
+
+      .text-primary {
+        color: var(--bs-primary) !important;
+      }
+
+      /* Efeito quando clica no campo */
+      .form-control:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 159, 67, 0.25);
+        z-index: 2;
+      }
+
+      /* Campos colados um no outro */
+      .input-top {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-bottom: -1px;
+      }
+      .input-bottom {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+      
+      .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+      }
+    </style>
+  </head>
+  <body>
+    
+    <main class="form-signin w-100 m-auto text-center">
+      <!-- Formulário com método POST enviando para o Python -->
+      <form action="/login" method="POST">
+        
+        <!-- Logo e Título -->
+        <a href="inicial.html" class="text-decoration-none">
+          <i class="bi bi-luggage-fill text-primary display-4 mb-2"></i>
+        </a>
+        <h1 class="h4 mb-4 fw-bold text-dark">Acesse sua conta</h1>
+
+        <!-- Campo USUÁRIO -->
+        <div class="form-floating">
+          <input type="text" class="form-control input-top" id="floatingInput" name="login" placeholder="Usuário ou Email" required />
+          <label for="floatingInput" class="text-muted"><i class="bi bi-person me-1"></i> Usuário ou Email</label>
+        </div>
+
+        <!-- Campo SENHA -->
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control input-bottom" id="floatingPassword" name="senha" placeholder="Senha" required />
+          <label for="floatingPassword" class="text-muted"><i class="bi bi-lock me-1"></i> Senha</label>
+        </div>
+
+        <!-- Checkbox Lembrar-me -->
+        <div class="form-check text-start mb-4">
+          <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault" name="lembrar" />
+          <label class="form-check-label text-muted small" for="flexCheckDefault">
+            Lembrar-me
+          </label>
+        </div>
+
+        <!-- Botão de Entrar -->
+        <button class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" type="submit">
+          Entrar
+        </button>
+
+        <!-- Links de Navegação -->
+        <div class="mt-4">
+          <p class="small mb-2 text-muted">Não tem uma conta? <a href="cadastro.html" class="text-primary fw-bold text-decoration-none">Cadastre-se</a></p>
+          <a href="inicial.html" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Voltar para o início</a>
+        </div>
+      </form>
+    </main>
+
+    <!-- JS do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

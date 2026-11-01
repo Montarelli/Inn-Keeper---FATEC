@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inn-Keeper - Viagens & Hospedagem</title>
+
+    <!-- Bootstrap 5 CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Bootstrap Icons via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- CSS CUSTOMIZADO -->
+    <style>
+      /* TEMA LARANJA CLARO (Estilo Decolar/Booking) */
+      :root {
+        --bs-primary: #ff9f43;
+        --bs-primary-hover: #ff8c1a;
+      }
+
+      body {
+        padding-top: 4rem; /* Espaço para o menu fixo branco */
+        color: #333;
+        background-color: #f8f9fa; /* Fundo cinza bem claro para destacar os cards brancos */
+      }
+
+      /* Botões Personalizados */
+      .btn-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+        font-weight: 600;
+      }
+      .btn-primary:hover {
+        background-color: var(--bs-primary-hover);
+        border-color: var(--bs-primary-hover);
+        color: #fff;
+      }
+      .btn-outline-primary {
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        font-weight: 600;
+      }
+      .btn-outline-primary:hover {
+        background-color: var(--bs-primary);
+        color: #fff;
+      }
+      .text-primary {
+        color: var(--bs-primary) !important;
+      }
+
+      /* Navbar Minimalista */
+      .navbar {
+        background-color: #ffffff !important;
+        border-bottom: 1px solid #eaeaea;
+      }
+      .navbar-brand {
+        color: #333 !important;
+      }
+      .nav-link {
+        color: #555 !important;
+        font-weight: 500;
+      }
+      .nav-link:hover, .nav-link.active {
+        color: var(--bs-primary) !important;
+      }
+
+      /* Carrossel */
+      .carousel {
+        margin-bottom: 3rem;
+      }
+      .carousel-item {
+        height: 35rem; /* Um pouco mais alto para impacto visual */
+      }
+      .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+        filter: brightness(0.65); /* Escurece a imagem para destacar o texto */
+      }
+      .carousel-hero {
+        position: absolute;
+        inset-inline: 10%;
+        bottom: 4rem;
+        z-index: 10;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Sombra suave para leitura */
+      }
+
+      /* Cards de Acomodações */
+      .hotel-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .hotel-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+      }
+      .hotel-card img {
+        height: 220px;
+        object-fit: cover;
+      }
+
+      /* Featurettes (Seções de Informação) */
+      .featurette-divider {
+        margin: 5rem 0;
+        border-color: #ddd;
+      }
+      .featurette-heading {
+        font-weight: 700;
+        letter-spacing: -0.03rem;
+        color: #222;
+      }
+      .featurette-image {
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- HEADER & NAVBAR BRANCA -->
+    <header>
+      <nav class="navbar navbar-expand-md fixed-top shadow-sm">
+        <div class="container-fluid px-4">
+          <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="index.html">
+            <i class="bi bi-luggage-fill text-primary"></i> Inn-Keeper
+          </a>
+          <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0 ms-md-4">
+              <li class="nav-item">
+                <a class="nav-link active" href="index.html">Início</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#quartos">Acomodações</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#experiencias">Experiências</a>
+              </li>
+            </ul>
+            <div class="d-flex gap-2">
+              <a href="login.html" class="btn btn-outline-primary px-4 rounded-pill">Entrar</a>
+              <a href="cadastro.html" class="btn btn-primary px-4 rounded-pill">Criar Conta</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- CAROUSEL SLIDER -->
+      <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+          <!-- Slide 1: Paisagem / Exterior -->
+          <div class="carousel-item active">
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80" alt="Resort">
+            <div class="container">
+              <div class="carousel-hero text-start">
+                <h1 class="display-3 fw-bold mb-3">Sua próxima viagem começa aqui.</h1>
+                <p class="fs-4 mb-4">Encontre as melhores estadias com conforto e segurança.</p>
+                <a class="btn btn-lg btn-primary rounded-pill px-5 shadow" href="#quartos">Buscar Destinos</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Quarto -->
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1920&q=80" alt="Quarto de Hotel">
+            <div class="container">
+              <div class="carousel-hero text-center">
+                <h1 class="display-3 fw-bold mb-3">Conforto que você merece</h1>
+                <p class="fs-4 mb-4">Quartos preparados meticulosamente para o seu descanso.</p>
+                <a class="btn btn-lg btn-primary rounded-pill px-5 shadow" href="cadastro.html">Reserve Agora</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Recepção / Atendimento -->
+          <div class="carousel-item">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80" alt="Recepção">
+            <div class="container">
+              <div class="carousel-hero text-end">
+                <h1 class="display-3 fw-bold mb-3">Atendimento Premium</h1>
+                <p class="fs-4 mb-4">Check-in digital, suporte 24h e concierge exclusivo.</p>
+                <a class="btn btn-lg btn-primary rounded-pill px-5 shadow" href="login.html">Fazer Login</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Próximo</span>
+        </button>
+      </div>
+
+      <!-- SEÇÃO DE QUARTOS (Estilo Cards do Booking) -->
+      <div class="container py-5" id="quartos">
+        <div class="row mb-5 text-center">
+          <h2 class="fw-bold">Acomodações em Destaque</h2>
+          <p class="text-muted">As opções mais reservadas pelos nossos hóspedes.</p>
+        </div>
+        
+        <div class="row g-4">
+          <!-- Card 1 -->
+          <div class="col-lg-4 col-md-6">
+            <div class="card hotel-card shadow-sm h-100">
+              <img src="https://images.unsplash.com/photo-1517840901100-8179e982acb7?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Quarto Standard">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between mb-2">
+                  <h5 class="card-title fw-bold mb-0">Quarto Standard</h5>
+                  <span class="badge bg-primary text-white d-flex align-items-center"><i class="bi bi-star-fill me-1"></i> 8.5</span>
+                </div>
+                <p class="card-text text-muted small mb-3">Ideal para estadias rápidas. Cama Queen, Wi-Fi rápido e ar-condicionado.</p>
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="text-muted small text-decoration-line-through d-block">R$ 250</span>
+                    <span class="fw-bold fs-5 text-success">R$ 180 <span class="fs-6 text-muted fw-normal">/noite</span></span>
+                  </div>
+                  <a href="reserva.html" class="btn btn-outline-primary">Ver Quartos</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="col-lg-4 col-md-6">
+            <div class="card hotel-card shadow-sm h-100">
+              <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Suíte Executiva">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between mb-2">
+                  <h5 class="card-title fw-bold mb-0">Suíte Executiva</h5>
+                  <span class="badge bg-primary text-white d-flex align-items-center"><i class="bi bi-star-fill me-1"></i> 9.2</span>
+                </div>
+                <p class="card-text text-muted small mb-3">Espaço amplo com cama King, varanda, banheira e área de trabalho.</p>
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="text-muted small text-decoration-line-through d-block">R$ 450</span>
+                    <span class="fw-bold fs-5 text-success">R$ 320 <span class="fs-6 text-muted fw-normal">/noite</span></span>
+                  </div>
+                  <a href="reserva.html" class="btn btn-outline-primary">Ver Quartos</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-lg-4 col-md-6">
+            <div class="card hotel-card shadow-sm h-100">
+              <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Suíte Presidencial">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between mb-2">
+                  <h5 class="card-title fw-bold mb-0">Suíte Presidencial</h5>
+                  <span class="badge bg-primary text-white d-flex align-items-center"><i class="bi bi-star-fill me-1"></i> 9.8</span>
+                </div>
+                <p class="card-text text-muted small mb-3">Luxo total. Vista panorâmica, hidromassagem, sala de estar e serviço VIP.</p>
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="fw-bold fs-5 text-success">R$ 650 <span class="fs-6 text-muted fw-normal">/noite</span></span>
+                  </div>
+                  <a href="reserva.html" class="btn btn-outline-primary">Ver Quartos</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="featurette-divider" id="experiencias" />
+
+        <!-- FEATURETTES COM IMAGENS REAIS -->
+        <div class="row featurette align-items-center">
+          <div class="col-md-7">
+            <h2 class="featurette-heading">Localização Privilegiada. <span class="text-primary">No coração da cidade.</span></h2>
+            <p class="lead text-muted mt-3">Acesso imediato aos principais pontos turísticos, museus e centros financeiros. Perfeito para quem viaja a lazer ou a negócios.</p>
+          </div>
+          <div class="col-md-5">
+            <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&q=80" class="featurette-image img-fluid w-100" alt="Cidade">
+          </div>
+        </div>
+
+        <hr class="featurette-divider" />
+
+        <div class="row featurette align-items-center">
+          <div class="col-md-7 order-md-2">
+            <h2 class="featurette-heading">Gastronomia Internacional. <span class="text-primary">Café da manhã incluso.</span></h2>
+            <p class="lead text-muted mt-3">Um buffet completo todas as manhãs e um restaurante premiado aberto para jantar, com pratos assinados por chefs renomados.</p>
+          </div>
+          <div class="col-md-5 order-md-1">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80" class="featurette-image img-fluid w-100" alt="Gastronomia">
+          </div>
+        </div>
+
+        <hr class="featurette-divider" />
+
+        <div class="row featurette align-items-center">
+          <div class="col-md-7">
+            <h2 class="featurette-heading">Reserva 100% Digital. <span class="text-primary">Na palma da mão.</span></h2>
+            <p class="lead text-muted mt-3">Faça o seu check-in e check-out online. Use nosso sistema moderno para gerenciar suas estadias sem pegar filas na recepção.</p>
+          </div>
+          <div class="col-md-5">
+            <img src="https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=600&q=80" class="featurette-image img-fluid w-100" alt="Digital">
+          </div>
+        </div>
+
+        <hr class="featurette-divider" />
+      </div>
+
+      <!-- FOOTER MINIMALISTA -->
+      <footer class="bg-white border-top py-4">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+          <p class="col-md-4 mb-0 text-muted">&copy; 2026 Inn-Keeper. Todos os direitos reservados.</p>
+          <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none fw-bold fs-5">
+            <i class="bi bi-luggage-fill text-primary me-2"></i> Inn-Keeper
+          </a>
+          <ul class="nav col-md-4 justify-content-end">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Privacidade</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Termos</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Suporte</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
