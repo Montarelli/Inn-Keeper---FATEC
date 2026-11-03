@@ -1,0 +1,50 @@
+
+# Controle de acesso v06
+import sqlite3
+from hashlib import sha256
+import sys
+
+def controle_acesso():
+    conn = sqlite3.connect("Cadastroclientes.db")
+    cursor = conn.cursor()
+
+    try:
+        tentativas = 0
+
+        while tentativas < 3:
+
+            if tentativas == 2:
+                print("Última tentativa!")
+
+            vlogin = input("Login: ")
+            vsenha = input("Senha: ")
+
+            senha_hash = sha256(vsenha.encode("utf-8")).hexdigest()
+
+            sql = """
+                SELECT COUNT(*)
+                FROM Cadclientes
+                WHERE login = ? AND senha = ?
+            """
+
+            cursor.execute(sql, (vlogin, senha_hash))
+            dados = cursor.fetchone()
+
+            if dados[0] > 0:
+                print("Acesso permitido!")
+                return
+
+            tentativas += 1
+            print("Acesso negado.")
+            print("Tentativas restantes:", 3 - tentativas)
+
+        print("Excedeu o número máximo de tentativas!")
+        print("Programa encerrado.")
+
+    finally:
+        conn.close()
+
+
+if __name__ == "__main__":
+    controle_acesso()
+    sys.exit(0)
