@@ -103,12 +103,19 @@
           <label for="floatingPassword" class="text-muted"><i class="bi bi-lock me-1"></i> Senha</label>
         </div>
 
-        <!-- Checkbox Lembrar-me -->
-        <div class="form-check text-start mb-4">
-          <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault" name="lembrar" />
-          <label class="form-check-label text-muted small" for="flexCheckDefault">
-            Lembrar-me
-          </label>
+        <!-- Checkbox Lembrar-me E Esqueci minha senha (Agora usando Grid para garantir visibilidade) -->
+        <div class="row mb-4 align-items-center">
+          <div class="col-6 text-start">
+            <div class="form-check mb-0">
+              <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault" name="lembrar" />
+              <label class="form-check-label text-muted small" for="flexCheckDefault">
+                Lembrar-me
+              </label>
+            </div>
+          </div>
+          <div class="col-6 text-end">
+            <a href="#" class="small text-primary text-decoration-none fw-bold">Esqueci a senha?</a>
+          </div>
         </div>
 
         <!-- Botão de Entrar -->
