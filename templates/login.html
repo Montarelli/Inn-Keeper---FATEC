@@ -86,15 +86,20 @@
       <form action="/login" method="POST">
         
         <!-- Logo e Título -->
-        <a href="inicial.html" class="text-decoration-none">
+        <a href="/" class="text-decoration-none"> <!-- ALTERADO: era inicial.html -->
           <i class="bi bi-luggage-fill text-primary display-4 mb-2"></i>
         </a>
         <h1 class="h4 mb-4 fw-bold text-dark">Acesse sua conta</h1>
 
+        <!-- NOVO: Mensagem de erro vinda do Python -->
+        {% if mensagem %}
+          <div class="alert alert-danger py-2 small" role="alert">{{ mensagem }}</div>
+        {% endif %}
+
         <!-- Campo USUÁRIO -->
         <div class="form-floating">
-          <input type="text" class="form-control input-top" id="floatingInput" name="login" placeholder="Usuário ou Email" required />
-          <label for="floatingInput" class="text-muted"><i class="bi bi-person me-1"></i> Usuário ou Email</label>
+          <input type="text" class="form-control input-top" id="floatingInput" name="login" placeholder="Email" required />
+          <label for="floatingInput" class="text-muted"><i class="bi bi-person me-1"></i>Email</label>
         </div>
 
         <!-- Campo SENHA -->
@@ -103,15 +108,20 @@
           <label for="floatingPassword" class="text-muted"><i class="bi bi-lock me-1"></i> Senha</label>
         </div>
 
-        <!-- Checkbox Lembrar-me e Esqueci minha senha -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <div class="form-check text-start mb-0">
-            <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault" name="lembrar" />
-            <label class="form-check-label text-muted small" for="flexCheckDefault">
-              Lembrar-me
-            </label>
+        <!-- Checkbox Lembrar-me E Esqueci minha senha -->
+        <div class="row mb-4 align-items-center">
+          <div class="col-6 text-start">
+            <div class="form-check mb-0">
+              <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault" name="lembrar" />
+              <label class="form-check-label text-muted small" for="flexCheckDefault">
+                Lembrar-me
+              </label>
+            </div>
           </div>
-          <a href="#" class="small text-primary text-decoration-none fw-bold">Esqueci minha senha</a>
+          <div class="col-6 text-end">
+            <!-- AQUI FOI ALTERADO: de href="#" para href="recuperar.html" -->
+            <a href="recuperar.html" class="small text-primary text-decoration-none fw-bold">Esqueci a senha?</a>
+          </div>
         </div>
 
         <!-- Botão de Entrar -->
@@ -121,8 +131,8 @@
 
         <!-- Links de Navegação -->
         <div class="mt-4">
-          <p class="small mb-2 text-muted">Não tem uma conta? <a href="cadastro.html" class="text-primary fw-bold text-decoration-none">Cadastre-se</a></p>
-          <a href="inicial.html" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Voltar para o início</a>
+          <p class="small mb-2 text-muted">Não tem uma conta? <a href="/cadastrar" class="text-primary fw-bold text-decoration-none">Cadastre-se</a></p> <!-- ALTERADO: era cadastro.html -->
+          <a href="/" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Voltar para o início</a> <!-- ALTERADO: era inicial.html -->
         </div>
       </form>
     </main>
