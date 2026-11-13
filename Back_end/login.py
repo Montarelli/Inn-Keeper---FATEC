@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for  # ALTERADO: redirect e url_for
+from flask import Blueprint, render_template, request, session
 import sqlite3
 from hashlib import sha256
 
@@ -8,12 +8,10 @@ login_bp = Blueprint('login', __name__)
 def controle_acesso():
     mensagem = None
 
-    # Se é a primeira vez do usuário, começa com 0 tentativas
     if 'tentativas' not in session:
         session['tentativas'] = 0
 
     if request.method == 'POST':
-        # Verifica se já estourou o limite antes mesmo de testar a senha
         if session['tentativas'] >= 3:
             mensagem = "Excedeu o número máximo de tentativas! Programa encerrado."
             return render_template('login.html', mensagem=mensagem)
@@ -37,14 +35,15 @@ def controle_acesso():
                 dados = cursor.fetchone()
 
                 if dados[0] > 0:
-                    session['tentativas'] = 0  # Zera as tentativas se acertar
-                    session['usuario'] = vlogin  # isso aq guarda quem está logado
-                    return redirect(url_for('inicial'))  # diz "Acesso permitido!"
+                    session['tentativas'] = 0
+                    
+                    # 👉 É AQUI QUE VOCÊ COLA! 
+                    # Em vez de retornar um texto simples, ele abre a sua página inicial logada
+                    return render_template('inicial_logado.html')
                 else:
                     session['tentativas'] += 1
                     restantes = 3 - session['tentativas']
                     
-                    # Usa as suas mensagens exatas dependendo de quantas tentativas restam
                     if session['tentativas'] >= 3:
                         mensagem = "Excedeu o número máximo de tentativas! Programa encerrado."
                     elif restantes == 1:
