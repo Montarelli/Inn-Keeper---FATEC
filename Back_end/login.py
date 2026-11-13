@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, redirect, url_for
 import sqlite3
 from hashlib import sha256
 
@@ -36,10 +36,10 @@ def controle_acesso():
 
                 if dados[0] > 0:
                     session['tentativas'] = 0
-                    
-                    # 👉 É AQUI QUE VOCÊ COLA! 
-                    # Em vez de retornar um texto simples, ele abre a sua página inicial logada
-                    return render_template('inicial_logado.html')
+                    session['usuario_logado'] = True  # sempre ficar logado
+                    session['usuario_nome'] = vlogin #guarda o login pra dps    
+                   
+                    return redirect(url_for('inicial'))
                 else:
                     session['tentativas'] += 1
                     restantes = 3 - session['tentativas']

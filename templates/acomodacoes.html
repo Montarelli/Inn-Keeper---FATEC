@@ -105,9 +105,16 @@
                 <a class="nav-link" href="/#experiencias">Experiências</a>
               </li>
             </ul>
-            <div class="d-flex gap-2">
-              <a href="/login" class="btn btn-outline-primary px-4 rounded-pill">Entrar</a>
-              <a href="/cadastrar" class="btn btn-primary px-4 rounded-pill">Criar Conta</a>
+            <div class="d-flex align-items-center gap-3">
+              {% if session.get('usuario_logado') %}
+                <span class="text-muted small d-none d-lg-inline">
+                  <i class="bi bi-person-check-fill text-primary"></i> {{ session.get('usuario_nome', 'Hóspede') }}
+                </span>
+                <a href="/sair" class="btn btn-outline-danger btn-sm px-3 rounded-pill">Sair</a>
+              {% else %}
+                <a href="/login" class="btn btn-outline-primary px-4 rounded-pill">Entrar</a>
+                <a href="/cadastrar" class="btn btn-primary px-4 rounded-pill">Criar Conta</a>
+              {% endif %}
             </div>
           </div>
         </div>
