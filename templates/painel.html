@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inn-Keeper - Painel do Sistema</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+      :root {
+        --bs-primary: #ff9f43;
+        --bs-primary-hover: #ff8c1a;
+      }
+
+      body {
+        padding-top: 5rem;
+        color: #333;
+        background-color: #f8f9fa;
+      }
+
+      .btn-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+        font-weight: 600;
+      }
+      .btn-primary:hover {
+        background-color: var(--bs-primary-hover);
+        border-color: var(--bs-primary-hover);
+        color: #fff;
+      }
+      .btn-outline-primary {
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        font-weight: 600;
+      }
+      .btn-outline-primary:hover {
+        background-color: var(--bs-primary);
+        color: #fff;
+      }
+      .text-primary {
+        color: var(--bs-primary) !important;
+      }
+
+      .navbar {
+        background-color: #ffffff !important;
+        border-bottom: 1px solid #eaeaea;
+      }
+
+      .panel-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+      }
+
+      .nav-pills .nav-link {
+        color: #555;
+        font-weight: 600;
+        border-radius: 50px;
+        padding: 0.55rem 1.25rem;
+      }
+      .nav-pills .nav-link.active {
+        background-color: var(--bs-primary);
+        color: #fff;
+      }
+
+      .form-control:focus, .form-select:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 159, 67, 0.25);
+      }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-expand-md fixed-top shadow-sm">
+        <div class="container-fluid px-4">
+          <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4 text-dark" href="/painel">
+            <i class="bi bi-luggage-fill text-primary"></i> Inn-Keeper
+          </a>
+
+          <div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="text-end d-none d-sm-block">
+              <div class="fw-bold small text-dark">{{ usuario['nome'] }} <span class="text-muted">({{ usuario['login'] }})</span></div>
+              <span class="badge {% if eh_staff %}bg-dark{% else %}bg-primary{% endif %}">
+                {{ usuario['perfil']|upper }}
+              </span>
+            </div>
+            <a href="/sair" class="btn btn-outline-danger btn-sm px-3 rounded-pill fw-semibold">
+              <i class="bi bi-box-arrow-right me-1"></i> Sair
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container py-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+              {{ msg }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <ul class="nav nav-pills mb-4 gap-2" id="painelTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link {% if aba == 'quartos' %}active{% endif %}" id="quartos-tab" data-bs-toggle="pill" data-bs-target="#tab-quartos" type="button">
+            <i class="bi bi-door-open me-1"></i> Quartos & Reservar
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link {% if aba == 'reservas' %}active{% endif %}" id="reservas-tab" data-bs-toggle="pill" data-bs-target="#tab-reservas" type="button">
+            <i class="bi bi-calendar-check me-1"></i> Minhas Reservas
+          </button>
+        </li>
+        {% if eh_staff %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link {% if aba == 'staff' %}active{% endif %}" id="staff-tab" data-bs-toggle="pill" data-bs-target="#tab-staff" type="button">
+              <i class="bi bi-shield-check me-1"></i> [STAFF] Todas as Reservas
+            </button>
+          </li>
+        {% endif %}
+        <li class="nav-item" role="presentation">
+          <button class="nav-link {% if aba == 'conta' %}active{% endif %}" id="conta-tab" data-bs-toggle="pill" data-bs-target="#tab-conta" type="button">
+            <i class="bi bi-person-gear me-1"></i> Minha Conta
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- ABA 1: QUARTOS & RESERVAR -->
+        <div class="tab-pane fade {% if aba == 'quartos' %}show active{% endif %}" id="tab-quartos">
+          <div class="row g-4">
+            <div class="col-lg-5">
+              <div class="card panel-card p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-calendar-plus text-primary me-2"></i>Nova Reserva / Disponibilidade</h5>
+                <form method="POST">
+                  <div class="mb-3">
+                    <label for="numero" class="form-label small fw-semibold">Número do Quarto</label>
+                    <input type="number" class="form-control" id="numero" name="numero" placeholder="Ex: 101" required />
+                  </div>
+
+                  <div class="row g-2 mb-4">
+                    <div class="col-6">
+                      <label for="data_entrada" class="form-label small fw-semibold">Entrada</label>
+                      <input type="date" class="form-control" id="data_entrada" name="data_entrada" required />
+                    </div>
+                    <div class="col-6">
+                      <label for="data_saida" class="form-label small fw-semibold">Saída</label>
+                      <input type="date" class="form-control" id="data_saida" name="data_saida" required />
+                    </div>
+                  </div>
+
+                  <div class="d-grid gap-2">
+                    <button type="submit" formaction="/reservar" class="btn btn-primary rounded-pill py-2">
+                      Fazer Nova Reserva
+                    </button>
+                    <button type="submit" formaction="/disponibilidade" class="btn btn-outline-primary rounded-pill py-2">
+                      Verificar Disponibilidade
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="col-lg-7">
+              <div class="card panel-card p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-building text-primary me-2"></i>Quartos Ativos</h5>
+                {% if not quartos %}
+                  <p class="text-muted mb-0">Nenhum quarto ativo cadastrado.</p>
+                {% else %}
+                  <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Número</th>
+                          <th>Tipo</th>
+                          <th class="text-end">Diária</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for q in quartos %}
+                          <tr>
+                            <td class="fw-bold">Quarto {{ q['numero'] }}</td>
+                            <td>{{ q['tipo'] }}</td>
+                            <td class="text-end fw-bold text-success">R$ {{ "%.2f"|format(q['preco_atual']) }}/diária</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: MINHAS RESERVAS -->
+        <div class="tab-pane fade {% if aba == 'reservas' %}show active{% endif %}" id="tab-reservas">
+          <div class="card panel-card p-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-journal-check text-primary me-2"></i>Minhas Reservas</h5>
+            {% if not minhas_reservas %}
+              <p class="text-muted mb-0">Você ainda não possui reservas.</p>
+            {% else %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Código</th>
+                      <th>Quarto</th>
+                      <th>Período</th>
+                      <th>Diária</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th class="text-end">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for r in minhas_reservas %}
+                      <tr>
+                        <td class="fw-bold">{{ r['idreserva'] }}</td>
+                        <td>Quarto {{ r['numero'] }}</td>
+                        <td class="small">{{ r['data_entrada'] }} até {{ r['data_saida'] }}</td>
+                        <td>R$ {{ "%.2f"|format(r['preco_diaria']) }}</td>
+                        <td class="fw-bold text-success">R$ {{ "%.2f"|format(r['valor_total']) }}</td>
+                        <td>
+                          {% if r['status'] == 'confirmada' %}
+                            <span class="badge bg-primary">{{ r['status'] }}</span>
+                          {% elif r['status'] == 'em_andamento' %}
+                            <span class="badge bg-info text-dark">{{ r['status'] }}</span>
+                          {% elif r['status'] == 'finalizada' %}
+                            <span class="badge bg-success">{{ r['status'] }}</span>
+                          {% else %}
+                            <span class="badge bg-secondary">{{ r['status'] }}</span>
+                          {% endif %}
+                        </td>
+                        <td class="text-end">
+                          {% if r['status'] == 'confirmada' %}
+                            <form action="/reserva/checkin" method="POST" class="d-inline">
+                              <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                              <input type="hidden" name="aba" value="reservas" />
+                              <button type="submit" class="btn btn-sm btn-success">Check-in</button>
+                            </form>
+                            <form action="/reserva/cancelar" method="POST" class="d-inline">
+                              <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                              <input type="hidden" name="aba" value="reservas" />
+                              <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                            </form>
+                          {% elif r['status'] == 'em_andamento' %}
+                            <form action="/reserva/checkout" method="POST" class="d-inline">
+                              <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                              <input type="hidden" name="aba" value="reservas" />
+                              <button type="submit" class="btn btn-sm btn-primary">Check-out</button>
+                            </form>
+                          {% else %}
+                            <span class="text-muted small">—</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- ABA 3: STAFF -->
+        {% if eh_staff %}
+          <div class="tab-pane fade {% if aba == 'staff' %}show active{% endif %}" id="tab-staff">
+            <div class="card panel-card p-4">
+              <h5 class="fw-bold mb-3"><i class="bi bi-shield-lock text-primary me-2"></i>[STAFF] Todas as Reservas do Hotel</h5>
+              {% if not todas_reservas %}
+                <p class="text-muted mb-0">Nenhuma reserva registrada no sistema.</p>
+              {% else %}
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Código</th>
+                        <th>Cliente</th>
+                        <th>Quarto</th>
+                        <th>Período</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th class="text-end">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for r in todas_reservas %}
+                        <tr>
+                          <td class="fw-bold">{{ r['idreserva'] }}</td>
+                          <td>{{ r['cliente'] }}</td>
+                          <td>Quarto {{ r['numero'] }}</td>
+                          <td class="small">{{ r['data_entrada'] }} até {{ r['data_saida'] }}</td>
+                          <td class="fw-bold text-success">R$ {{ "%.2f"|format(r['valor_total']) }}</td>
+                          <td><span class="badge bg-dark">{{ r['status'] }}</span></td>
+                          <td class="text-end">
+                            {% if r['status'] == 'confirmada' %}
+                              <form action="/reserva/checkin" method="POST" class="d-inline">
+                                <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                                <input type="hidden" name="aba" value="staff" />
+                                <button type="submit" class="btn btn-sm btn-success">Check-in</button>
+                              </form>
+                              <form action="/reserva/cancelar" method="POST" class="d-inline">
+                                <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                                <input type="hidden" name="aba" value="staff" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                              </form>
+                            {% elif r['status'] == 'em_andamento' %}
+                              <form action="/reserva/checkout" method="POST" class="d-inline">
+                                <input type="hidden" name="idreserva" value="{{ r['idreserva'] }}" />
+                                <input type="hidden" name="aba" value="staff" />
+                                <button type="submit" class="btn btn-sm btn-primary">Check-out</button>
+                              </form>
+                            {% else %}
+                              <span class="text-muted small">—</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- ABA 4: ALTERAR DADOS E EXCLUIR CONTA -->
+        <div class="tab-pane fade {% if aba == 'conta' %}show active{% endif %}" id="tab-conta">
+          <div class="row g-4">
+            <div class="col-lg-7">
+              <div class="card panel-card p-4">
+                <h5 class="fw-bold mb-1"><i class="bi bi-pencil-square text-primary me-2"></i>Alteração de Dados Cadastrais</h5>
+                <p class="small text-muted mb-4">
+                  Nome atual: <strong>{{ usuario['nome'] }}</strong> |
+                  Login atual: <strong>{{ usuario['login'] }}</strong> |
+                  E-mail atual: <strong>{{ usuario['email'] }}</strong>
+                </p>
+
+                <form action="/alterar-dados" method="POST" class="row g-2 align-items-end mb-3 pb-3 border-bottom">
+                  <input type="hidden" name="escolha" value="1" />
+                  <div class="col-md-5">
+                    <label class="form-label small fw-semibold">1 - Novo Nome</label>
+                    <input type="text" name="novo_nome" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Senha Atual</label>
+                    <input type="password" name="senha_atual" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-sm btn-primary">Alterar Nome</button>
+                  </div>
+                </form>
+
+                <form action="/alterar-dados" method="POST" class="row g-2 align-items-end mb-3 pb-3 border-bottom">
+                  <input type="hidden" name="escolha" value="2" />
+                  <div class="col-md-5">
+                    <label class="form-label small fw-semibold">2 - Novo Login</label>
+                    <input type="text" name="novo_login" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Senha Atual</label>
+                    <input type="password" name="senha_atual" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-sm btn-primary">Alterar Login</button>
+                  </div>
+                </form>
+
+                <form action="/alterar-dados" method="POST" class="row g-2 align-items-end mb-3 pb-3 border-bottom">
+                  <input type="hidden" name="escolha" value="3" />
+                  <div class="col-md-5">
+                    <label class="form-label small fw-semibold">3 - Novo E-mail</label>
+                    <input type="email" name="novo_email" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-semibold">Senha Atual</label>
+                    <input type="password" name="senha_atual" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-sm btn-primary">Alterar E-mail</button>
+                  </div>
+                </form>
+
+                <form action="/alterar-dados" method="POST" class="row g-2 align-items-end">
+                  <input type="hidden" name="escolha" value="4" />
+                  <div class="col-md-3">
+                    <label class="form-label small fw-semibold">4 - Nova Senha</label>
+                    <input type="password" name="nova_senha" minlength="5" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Confirmar</label>
+                    <input type="password" name="confirma_senha" minlength="5" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-semibold">Senha Atual</label>
+                    <input type="password" name="senha_atual" class="form-control form-control-sm" required />
+                  </div>
+                  <div class="col-md-3 d-grid">
+                    <button type="submit" class="btn btn-sm btn-primary">Alterar Senha</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <div class="card panel-card p-4 border border-danger">
+                <h5 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Exclusão da Própria Conta</h5>
+                <p class="small text-muted mb-3">
+                  Conta atual: <strong>{{ usuario['nome'] }} ({{ usuario['login'] }})</strong>
+                </p>
+                <form action="/excluir-conta" method="POST">
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Confirme sua senha atual para prosseguir</label>
+                    <input type="password" name="senha_atual" class="form-control" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label small fw-semibold">Digite <code>sim</code> para confirmar a exclusão permanente</label>
+                    <input type="text" name="confirma" placeholder="sim" class="form-control" required />
+                  </div>
+                  <button type="submit" class="btn btn-danger w-100 rounded-pill fw-semibold">
+                    Excluir Minha Conta
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

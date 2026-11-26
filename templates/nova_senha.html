@@ -3,50 +3,112 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Inn-Keeper - Nova Senha</title>
+    <title>Inn-Keeper - Redefinir Senha</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <style>
-      :root { --bs-primary: #ff9f43; --bs-primary-hover: #ff8c1a; }
-      body { display: flex; align-items: center; padding-top: 40px; padding-bottom: 40px; background-color: #f8f9fa; height: 100vh;}
-      .form-signin { max-width: 400px; padding: 2.5rem 2rem; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-      .btn-primary { background-color: var(--bs-primary); border-color: var(--bs-primary); color: #fff; }
-      .btn-primary:hover { background-color: var(--bs-primary-hover); border-color: var(--bs-primary-hover); color: #fff; }
+      :root {
+        --bs-primary: #ff9f43;
+        --bs-primary-hover: #ff8c1a;
+      }
+      html, body {
+        height: 100%;
+        background-color: #f8f9fa;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+      .form-signin {
+        max-width: 420px;
+        padding: 2.5rem 2rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      }
+      .btn-primary {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background-color: var(--bs-primary-hover);
+        border-color: var(--bs-primary-hover);
+        color: #fff;
+      }
+      .text-primary {
+        color: var(--bs-primary) !important;
+      }
+      .form-control:focus {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.25rem rgba(255, 159, 67, 0.25);
+        z-index: 2;
+      }
+      .input-top {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      .input-middle {
+        border-radius: 0;
+        margin-top: -1px;
+      }
+      .input-bottom {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        margin-top: -1px;
+      }
     </style>
   </head>
   <body>
     <main class="form-signin w-100 m-auto text-center">
       <form action="/nova-senha" method="POST">
-        <h1 class="h4 mb-2 fw-bold text-dark">Definir Nova Senha</h1>
-        <p class="text-muted small mb-4">Insira o código recebido por e-mail e sua nova senha.</p>
-
-        {% if erro %}
-          <div class="alert alert-danger p-2 small mb-3">{{ erro }}</div>
+        <i class="bi bi-shield-lock-fill text-primary display-4 mb-2"></i>
+        <h1 class="h4 mb-2 fw-bold text-dark">Redefinir Senha</h1>
+        {% if nome %}
+          <p class="small text-muted mb-3">Olá, <strong>{{ nome }}</strong>!</p>
         {% endif %}
 
-        {% if token_teste %}
-          <div class="alert alert-warning p-2 small mb-3">
-            <strong>[MODO DESENVOLVIMENTO]</strong><br>
-            Seu código é: <strong>{{ token_teste }}</strong>
+        {% if token_demo %}
+          <div class="alert alert-warning py-2 small" role="alert">
+            <strong>Código de Recuperação (Demo):</strong><br>
+            <span class="fs-5 fw-bold tracking-wider">{{ token_demo }}</span><br>
+            <span class="text-muted">Válido por 15 minutos (uso único).</span>
           </div>
         {% endif %}
 
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="token" name="token" placeholder="Código" required>
-          <label for="token">Código de 6 letras</label>
+        {% if erro %}
+          <div class="alert alert-danger py-2 small" role="alert">{{ erro }}</div>
+        {% endif %}
+
+        <div class="form-floating">
+          <input type="text" class="form-control input-top" id="token" name="token" maxlength="6" placeholder="Código de 6 dígitos" required />
+          <label for="token" class="text-muted"><i class="bi bi-hash me-1"></i> Código de 6 dígitos</label>
         </div>
 
-        <div class="form-floating mb-3">
-          <input type="password" class="form-control" id="senha" name="senha" placeholder="Nova Senha" required>
-          <label for="senha">Nova Senha (mín. 5 char)</label>
+        <div class="form-floating">
+          <input type="password" class="form-control input-middle" id="senha" name="senha" minlength="5" placeholder="Nova Senha" required />
+          <label for="senha" class="text-muted"><i class="bi bi-lock me-1"></i> Nova Senha (mín. 5 carac.)</label>
         </div>
-        
+
         <div class="form-floating mb-4">
-          <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" placeholder="Confirmar Senha" required>
-          <label for="confirmar_senha">Confirmar Senha</label>
+          <input type="password" class="form-control input-bottom" id="confirmar_senha" name="confirmar_senha" minlength="5" placeholder="Confirmar Senha" required />
+          <label for="confirmar_senha" class="text-muted"><i class="bi bi-lock-fill me-1"></i> Confirmar Nova Senha</label>
         </div>
 
-        <button class="btn btn-primary w-100 py-2 fw-bold rounded-pill" type="submit">Salvar Nova Senha</button>
+        <button class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" type="submit">
+          Alterar Senha
+        </button>
+
+        <div class="mt-4">
+          <a href="/recuperacao" class="text-decoration-none small text-muted"><i class="bi bi-arrow-repeat"></i> Solicitar novo código</a>
+        </div>
       </form>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

@@ -86,20 +86,20 @@
       <form action="/login" method="POST">
         
         <!-- Logo e Título -->
-        <a href="/" class="text-decoration-none"> <!-- ALTERADO: era inicial.html -->
+        <a href="/" class="text-decoration-none">
           <i class="bi bi-luggage-fill text-primary display-4 mb-2"></i>
         </a>
         <h1 class="h4 mb-4 fw-bold text-dark">Acesse sua conta</h1>
 
-        <!-- NOVO: Mensagem de erro vinda do Python -->
+        <!-- Mensagem de erro vinda do Python -->
         {% if mensagem %}
           <div class="alert alert-danger py-2 small" role="alert">{{ mensagem }}</div>
         {% endif %}
 
         <!-- Campo USUÁRIO -->
         <div class="form-floating">
-          <input type="text" class="form-control input-top" id="floatingInput" name="login" placeholder="Email" required />
-          <label for="floatingInput" class="text-muted"><i class="bi bi-person me-1"></i>Email</label>
+          <input type="text" class="form-control input-top" id="floatingInput" name="login" placeholder="Usuário" required />
+          <label for="floatingInput" class="text-muted"><i class="bi bi-person me-1"></i> Usuário</label>
         </div>
 
         <!-- Campo SENHA -->
@@ -131,8 +131,8 @@
 
         <!-- Links de Navegação -->
         <div class="mt-4">
-          <p class="small mb-2 text-muted">Não tem uma conta? <a href="/cadastrar" class="text-primary fw-bold text-decoration-none">Cadastre-se</a></p> <!-- ALTERADO: era cadastro.html -->
-          <a href="/" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Voltar para o início</a> <!-- ALTERADO: era inicial.html -->
+          <p class="small mb-2 text-muted">Não tem uma conta? <a href="/cadastrar" class="text-primary fw-bold text-decoration-none">Cadastre-se</a></p>
+          <a href="/" class="text-decoration-none small text-muted"><i class="bi bi-arrow-left"></i> Voltar para o início</a>
         </div>
       </form>
     </main>
