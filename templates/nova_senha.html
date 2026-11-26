@@ -68,17 +68,7 @@
       <form action="/nova-senha" method="POST">
         <i class="bi bi-shield-lock-fill text-primary display-4 mb-2"></i>
         <h1 class="h4 mb-2 fw-bold text-dark">Redefinir Senha</h1>
-        {% if nome %}
-          <p class="small text-muted mb-3">Olá, <strong>{{ nome }}</strong>!</p>
-        {% endif %}
-
-        {% if token_demo %}
-          <div class="alert alert-warning py-2 small" role="alert">
-            <strong>Código de Recuperação (Demo):</strong><br>
-            <span class="fs-5 fw-bold tracking-wider">{{ token_demo }}</span><br>
-            <span class="text-muted">Válido por 15 minutos (uso único).</span>
-          </div>
-        {% endif %}
+        <p class="small text-muted mb-3">Digite o código de 6 dígitos exibido no terminal (válido por 15 minutos).</p>
 
         {% if erro %}
           <div class="alert alert-danger py-2 small" role="alert">{{ erro }}</div>

@@ -44,6 +44,37 @@ def obter_colunas_cadclientes(cursor) -> set:
     return {row["name"].lower() for row in cursor.fetchall()}
 
 
+def inicializar_rbac():
+    conn = None
+    try:
+        conn = conectar()
+        cursor = conn.cursor()
+
+        colunas = obter_colunas_cadclientes(cursor)
+        if "perfil" not in colunas:
+            cursor.execute("ALTER TABLE Cadclientes ADD COLUMN perfil VARCHAR(20) DEFAULT 'cliente'")
+            conn.commit()
+
+        cursor.execute("SELECT idcliente FROM Cadclientes WHERE login = ? OR cpf = ?", ("admin", "00000000000"))
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """
+                INSERT INTO Cadclientes (cpf, nome, login, email, senha, perfil)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                ("00000000000", "Administrador Innkeeper", "admin", "admin@innkeeper.com", hash_senha("admin123"), "admin"),
+            )
+            conn.commit()
+    except (sqlite3.Error, FileNotFoundError) as erro:
+        print(f"Aviso RBAC: {erro}")
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+inicializar_rbac()
+
+
 # --------------------------------------------------
 # VALIDADORES
 # --------------------------------------------------
@@ -1155,13 +1186,16 @@ def main():
 
 
 # --------------------------------------------------
-# ROTAS FLASK (INTEGRAÇÃO COM O FRONT-END)
+# ROTAS FLASK (INTEGRAÇÃO COM O FRONT-END + RBAC)
 # --------------------------------------------------
 
 @app.route("/")
 @app.route("/inicial")
 def inicial():
-    if session.get("usuario"):
+    usuario = session.get("usuario")
+    if usuario:
+        if usuario.get("perfil") in ("admin", "recepcionista", "gerente"):
+            return redirect(url_for("painel_staff"))
         return redirect(url_for("painel"))
     return render_template("inicial.html")
 
@@ -1268,6 +1302,7 @@ def web_login():
 
             if usuario is not None:
                 perfil = usuario["perfil"] if tem_coluna_perfil and usuario["perfil"] else "cliente"
+                perfil = perfil.lower()
                 session["tentativas"] = 0
                 session.pop("bloqueado_ate", None)
                 session["usuario"] = {
@@ -1275,8 +1310,10 @@ def web_login():
                     "nome": usuario["nome"],
                     "login": usuario["login"],
                     "email": usuario["email"],
-                    "perfil": perfil.lower(),
+                    "perfil": perfil,
                 }
+                if perfil in ("admin", "recepcionista", "gerente"):
+                    return redirect(url_for("painel_staff"))
                 return redirect(url_for("painel"))
 
             session["tentativas"] += 1
@@ -1438,6 +1475,50 @@ def painel():
     )
 
 
+@app.route("/painel-staff")
+def painel_staff():
+    usuario = session.get("usuario")
+    if not usuario:
+        return redirect(url_for("web_login"))
+
+    perfil = usuario["perfil"]
+    eh_staff = perfil in ("admin", "recepcionista", "gerente")
+    if not eh_staff:
+        flash("Acesso negado! Esta área é restrita ao perfil Staff/Admin (RBAC).", "danger")
+        return redirect(url_for("painel"))
+
+    todas_reservas = []
+    clientes = []
+    quartos = []
+
+    conn = None
+    try:
+        todas_reservas = listar_reservas(usuario["idcliente"], todas=True)
+        quartos = listar_quartos()
+
+        conn = conectar()
+        cursor = conn.cursor()
+        colunas = obter_colunas_cadclientes(cursor)
+        if "perfil" in colunas:
+            cursor.execute("SELECT idcliente, cpf, nome, login, email, COALESCE(perfil, 'cliente') AS perfil FROM Cadclientes ORDER BY idcliente")
+        else:
+            cursor.execute("SELECT idcliente, cpf, nome, login, email, 'cliente' AS perfil FROM Cadclientes ORDER BY idcliente")
+        clientes = [dict(row) for row in cursor.fetchall()]
+    except (sqlite3.Error, FileNotFoundError) as erro:
+        flash(f"Erro no sistema: {erro}", "danger")
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return render_template(
+        "painel_staff.html",
+        usuario=usuario,
+        todas_reservas=todas_reservas,
+        clientes=clientes,
+        quartos=quartos,
+    )
+
+
 @app.route("/disponibilidade", methods=["POST"])
 def web_disponibilidade():
     usuario = session.get("usuario")
@@ -1509,6 +1590,7 @@ def web_cancelar_reserva():
 
     eh_staff = usuario["perfil"] in ("admin", "recepcionista", "gerente")
     aba = request.form.get("aba", "reservas")
+    origem = request.form.get("origem", "")
     try:
         idreserva = int(request.form.get("idreserva", ""))
         ok, msg = alterar_status_reserva(
@@ -1521,6 +1603,8 @@ def web_cancelar_reserva():
     except (sqlite3.Error, FileNotFoundError) as erro:
         flash(f"Erro no sistema: {erro}", "danger")
 
+    if origem == "staff":
+        return redirect(url_for("painel_staff"))
     return redirect(url_for("painel", aba=aba))
 
 
@@ -1532,6 +1616,7 @@ def web_checkin():
 
     eh_staff = usuario["perfil"] in ("admin", "recepcionista", "gerente")
     aba = request.form.get("aba", "reservas")
+    origem = request.form.get("origem", "")
     try:
         idreserva = int(request.form.get("idreserva", ""))
         ok, msg = alterar_status_reserva(
@@ -1544,6 +1629,8 @@ def web_checkin():
     except (sqlite3.Error, FileNotFoundError) as erro:
         flash(f"Erro no sistema: {erro}", "danger")
 
+    if origem == "staff":
+        return redirect(url_for("painel_staff"))
     return redirect(url_for("painel", aba=aba))
 
 
@@ -1555,6 +1642,7 @@ def web_checkout():
 
     eh_staff = usuario["perfil"] in ("admin", "recepcionista", "gerente")
     aba = request.form.get("aba", "reservas")
+    origem = request.form.get("origem", "")
     try:
         idreserva = int(request.form.get("idreserva", ""))
         ok, msg = alterar_status_reserva(
@@ -1567,6 +1655,8 @@ def web_checkout():
     except (sqlite3.Error, FileNotFoundError) as erro:
         flash(f"Erro no sistema: {erro}", "danger")
 
+    if origem == "staff":
+        return redirect(url_for("painel_staff"))
     return redirect(url_for("painel", aba=aba))
 
 
