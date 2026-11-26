@@ -8,22 +8,22 @@ recuperacao_bp = Blueprint('recuperacao', __name__)
 
 @recuperacao_bp.route('/gerar-codigo', methods=['POST'])
 def gerar_codigo():
-    email = request.form.get('email')
+    email_digitado = request.form.get('email')
     
     conn = sqlite3.connect("Cadastroclientes.db")
     cursor = conn.cursor()
     
     try:
-        # Corrigido para buscar 'id' e 'login' conforme o seu banco
-        cursor.execute("SELECT id, login FROM Cadclientes WHERE email = ?", (email,))
+        # Corrigido para buscar na coluna 'login' correta do seu banco
+        cursor.execute("SELECT id, login FROM Cadclientes WHERE login = ?", (email_digitado,))
         cliente = cursor.fetchone()
         
         if cliente is None:
-            return render_template('recuperacao.html', erro="E-mail não encontrado.")
+            return render_template('recuperacao.html', erro="E-mail ou usuário não encontrado.")
             
         idcliente = cliente[0]
         
-        # Gera o token (código de 6 letras para ficar fácil do usuário copiar/colar)
+        # Gera o token de 6 caracteres
         token = secrets.token_hex(3)
         token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
         expiracao = int(time.time()) + (15 * 60)
@@ -34,7 +34,7 @@ def gerar_codigo():
         """, (idcliente, token_hash, expiracao))
         conn.commit()
         
-        session['token_gerado'] = token # Exibe na tela para teste
+        session['token_gerado'] = token # Salva o token para exibir na tela seguinte
         
         return redirect(url_for('recuperacao.nova_senha'))
         
